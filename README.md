@@ -58,8 +58,9 @@ FitCheck is designed for online shoppers who frequently buy clothing from variou
 ### Endpoints
 
 Not applicable. Since I am creating a Chrome extension, this project will primarily operate client-side. If I do end up expanding my scope to include a backend, potential endpoints could include:
-    - GET /api/sizechart/:brandId to retrieve a size chart for a specific brand
-    - POST /api/user/measurements to save user measurements
+
+-  GET /api/sizechart/:brandId to retrieve a size chart for a specific brand
+- POST /api/user/measurements to save user measurements
 
 ### Auth
 
