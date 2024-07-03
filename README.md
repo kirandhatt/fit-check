@@ -47,7 +47,7 @@ FitCheck is designed for online shoppers who frequently buy clothing from variou
 
 ### Mockups
 
-![Rough Mockup of FitCheck Extension] (assets/mockups/FitCheck-Rough-Mockup.jpg)
+![Rough Mockup of FitCheck Extension](assets/mockups/FitCheck-Rough-Mockup.jpg)
 
 ### Data
 
