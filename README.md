@@ -1,5 +1,4 @@
-# Project Title
-FitCheck: Sizing Simplified
+# FitCheck: Sizing Simplified
 
 ## Overview
 
