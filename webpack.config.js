@@ -2,9 +2,9 @@ const path = require('path');
 
 module.exports = {
     entry: {
-        content: './content.js',
-        options: './options.js',
-        popup: './popup.js'
+        content: './src/content/content.js',
+        popup: './src/popup/popup.js',
+        options: './src/options/options.js'
     },
     output: {
         filename: '[name].bundle.js',
