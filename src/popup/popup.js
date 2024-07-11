@@ -1,14 +1,30 @@
 import '../styles/styles.scss';
 
+function initializeExtension() {
+  chrome.storage.sync.get(['unit'], (result) => {
+    if (!result.unit) {
+      chrome.storage.sync.set({ unit: 'in' }, () => {
+        updateUnitLabels('in');
+      });
+    } else {
+      updateUnitLabels(result.unit);
+    }
+  });
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const measurementForm = document.getElementById('measurementForm');
   const optionsButton = document.getElementById('optionsButton');
 
+  initializeExtension();
   loadMeasurements();
 
   measurementForm.addEventListener('submit', saveMeasurements);
   optionsButton.addEventListener('click', openOptions);
+
+  chrome.storage.onChanged.addListener(handleStorageChanges);
 });
+
 
 // load saved measurements
 function loadMeasurements() {
@@ -51,9 +67,9 @@ function saveMeasurements(e) {
 }
 
 function updateUnitLabels(unit) {
-  const unitSpans = document.querySelectorAll('.unit');
-  unitSpans.forEach(span => {
-    span.textContent = unit;
+  const unitLabels = document.querySelectorAll('.unit-label');
+  unitLabels.forEach(label => {
+    label.textContent = unit === 'cm' ? 'centimeters' : 'inches';
   });
 
   // update input step and placeholder based on the unit
@@ -70,12 +86,25 @@ function updateUnitLabels(unit) {
 }
 
 function openOptions() {
-  chrome.runtime.openOptionsPage();
+  if (chrome.runtime.openOptionsPage) {
+    chrome.runtime.openOptionsPage();
+  } else {
+    window.open(chrome.runtime.getURL('options.html'));
+  }
 }
 
 // listen for changes in storage
 chrome.storage.onChanged.addListener((changes, namespace) => {
   if (namespace === 'sync' && changes.unit) {
     updateUnitLabels(changes.unit.newValue);
+    chrome.storage.onChanged.addListener(handleStorageChanges);
   }
 });
+
+// handle changes in storage
+function handleStorageChanges(changes, namespace) {
+  if (namespace === 'sync' && changes.unit) {
+    updateUnitLabels(changes.unit.newValue);
+    loadMeasurements(); // reload measurements to display in the new unit
+  }
+}

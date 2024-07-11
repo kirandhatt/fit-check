@@ -6,9 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   loadOptions();
   optionsForm.addEventListener('submit', saveOptions);
-  backToPopupButton.addEventListener('click', () => {
-    chrome.action.openPopup();
-  });
+  backToPopupButton.addEventListener('click', closeOptionsPage);
 });
 
 function loadOptions() {
@@ -39,6 +37,16 @@ function saveOptions(e) {
 
     chrome.storage.sync.set({ unit: newUnit, measurements }, () => {
       alert('Options saved successfully!');
+      updateUnitDisplay(newUnit);
     });
   });
+}
+
+function updateUnitDisplay(unit) {
+  const unitSelect = document.getElementById('unit');
+  unitSelect.value = unit;
+}
+
+function closeOptionsPage() {
+  window.close();
 }
