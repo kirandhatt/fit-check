@@ -1,1 +1,9 @@
-/*# sourceMappingURL=styles.css.map */
+@font-face {
+  font-family: "Share Tech Mono";
+  src: url("../../assets/typography/ShareTechMono-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+* {
+  font-family: Share Tech Mono, "Courier New", Courier, monospace;
+}/*# sourceMappingURL=styles.css.map */
