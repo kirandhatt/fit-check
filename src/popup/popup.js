@@ -115,8 +115,18 @@ function displayRecommendation(recommendation) {
   const popupContent = document.getElementById('popupContent');
   const recommendationContent = document.getElementById('recommendationContent');
 
-  sizeRecommendation.textContent = `Recommended Size: ${recommendation.size}`;
-  confidenceLevel.textContent = `Confidence: ${recommendation.confidence}%`;
+  const isError = recommendation.size.toLowerCase().includes('error') || 
+                  recommendation.size.toLowerCase().includes('unable') ||
+                  recommendation.confidence === 0;
+
+  sizeRecommendation.innerHTML = `
+    <span class="recommendation-label">Recommended Size:</span> 
+    <span class="recommendation-value ${isError ? 'error-state' : ''}">${recommendation.size}</span>
+  `;
+  confidenceLevel.innerHTML = `
+    <span class="confidence-label">Confidence:</span> 
+    <span class="confidence-value ${recommendation.confidence === 0 ? 'error-state' : ''}">${recommendation.confidence}%</span>
+  `;
 
   popupContent.style.display = 'none';
   recommendationContent.style.display = 'block';
@@ -137,8 +147,8 @@ async function analyzePage() {
       return { size: 'No size chart found', confidence: 0 };
     }
   } catch (error) {
-    console.error('Error analyzing the page:', error);
-    return { size: 'Error analyzing the page', confidence: 0 };
+    console.error('Error analyzing page:', error);
+    return { size: 'Error analyzing page', confidence: 0 };
   }
 }
 

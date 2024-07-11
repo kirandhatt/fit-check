@@ -3,6 +3,7 @@
 // variables
 $primary-color: #9f8fff;
 $secondary-color: #7e93ff;
+$error-color: #FF6E56;
 $background-color: #F7F7F7;
 $text-color: #000000;
 $border-color: #000000;
@@ -115,6 +116,7 @@ button {
     box-shadow: 0 0.25rem 0.5rem $shadow-color;
     z-index: 9999;
     font-family: $font-family;
+    animation: fadeIn 0.3s ease-in-out;
 }
 
 h3 {
@@ -123,23 +125,36 @@ h3 {
     margin: 1rem 1.25rem;
 }
 
-p {
+.recommendation-label, .confidence-label {
     font-size: 1rem;
-    margin: 1rem 1.25rem 1rem;
+    margin: 1rem 0.25rem 1rem 1.25rem;
+}
+  
+.recommendation-value {
+    display: flex;
+    font-size: 1rem;
+    margin: 0.25rem 0.25rem 1rem 1.25rem;
+    text-wrap: wrap;
+    color: $secondary-color;
 }
 
-strong {
-    color: $primary-color;
+.confidence-value {
+    font-size: 1rem;
+    color: $secondary-color;
+}
+
+.error-state {
+    color: $error-color;
+}
+
+#backToPopupButton {
+    margin-top: 1rem;
 }
 
 // animations
 @keyframes fadeIn {
     from { opacity: 0; }
     to { opacity: 1; }
-}
-
-#fitcheck-recommendation {
-    animation: fadeIn 0.3s ease-in-out;
 }
 
 // accessibility
