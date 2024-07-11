@@ -27,9 +27,18 @@
         </div>
         <button type="submit">Save Measurements</button>
         </form>
-        <a href="/options.html">
-            <button id="optionsButton">Options</button>
-        </a>
+        <div class="buttonContainer">
+            <a href="/options.html">
+                <button id="optionsButton">Options</button>
+            </a>
+            <button id="findMySizeButton" disabled>Find My Size!</button>
+        </div>
+        </div>
+        <div id="recommendationContent" style="display: none;">
+            <h3>FitCheck Recommendation</h3>
+            <p id="sizeRecommendation"></p>
+            <p id="confidenceLevel"></p>
+            <button id="backToPopupButton">Back</button>
         </div>
         <iframe id="optionsFrame" src="options.html" style="display:none; width:100%; height:100vh;"></iframe>
     </main>

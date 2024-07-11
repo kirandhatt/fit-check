@@ -2,10 +2,11 @@
   "manifest_version": 3,
   "name": "FitCheck",
   "version": "1.0",
-  "description": "Helps you find your size in different clothing brands",
+  "description": "Helps you find your size in different clothing brands.",
   "permissions": [
     "storage",
-    "activeTab"
+    "activeTab",
+    "scripting"
   ],
   "host_permissions": [
     "<all_urls>"
@@ -15,11 +16,7 @@
     "default_icon": "assets/icons/fitCheck_favicon.png"
   },
   "options_page": "/options.html",
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["/content.bundle.js"],
-      "css": ["content.css"]
-    }
-  ]
+  "background": {
+    "service_worker": "/background.bundle.js"
+  }
 }
