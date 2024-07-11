@@ -91,15 +91,17 @@ function findMySize() {
     if (tabs[0]) {
       chrome.scripting.executeScript({
         target: { tabId: tabs[0].id },
-        function: analyzePage
+        function: () => {
+          return document.body.innerHTML;
+        }
       }, (injectionResults) => {
         if (chrome.runtime.lastError) {
           console.error(chrome.runtime.lastError);
-          displayRecommendation({ size: 'Error: Unable to analyze page', confidence: 0 });
-        } else if (injectionResults && injectionResults[0]) {
-          displayRecommendation(injectionResults[0].result);
+          displayRecommendation({ size: `Error: ${chrome.runtime.lastError.message}`, confidence: 0 });
+        } else if (injectionResults && injectionResults[0] && injectionResults[0].result) {
+          analyzePage(injectionResults[0].result);
         } else {
-          displayRecommendation({ size: 'Unable to determine', confidence: 0 });
+          displayRecommendation({ size: 'Unable to retrieve page content', confidence: 0 });
         }
       });
     } else {
@@ -132,23 +134,29 @@ function displayRecommendation(recommendation) {
   recommendationContent.style.display = 'block';
 }
 
-async function analyzePage() {
+async function analyzePage(pageContent) {
   try {
-    const sizeChart = parseSizeChart(document);
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(pageContent, 'text/html');
+    const sizeChart = parseSizeChart(doc);
+    
     if (sizeChart) {
-      const { measurements, unit = 'in' } = await chrome.storage.sync.get(['measurements', 'unit']);
+      const storage = await chrome.storage.sync.get(['measurements', 'unit']);
+      const measurements = storage.measurements;
+      const unit = storage.unit || 'in';
 
-      if (measurements) {
-        return getRecommendation(sizeChart, measurements, unit);
+      if (measurements && Object.keys(measurements).length > 0) {
+        const recommendation = getRecommendation(sizeChart, measurements, unit);
+        displayRecommendation(recommendation);
       } else {
-        return { size: 'No measurements found', confidence: 0 };
+        displayRecommendation({ size: 'No measurements found', confidence: 0 });
       }
     } else {
-      return { size: 'No size chart found', confidence: 0 };
+      displayRecommendation({ size: 'No size chart found', confidence: 0 });
     }
   } catch (error) {
-    console.error('Error analyzing page:', error);
-    return { size: 'Error analyzing page', confidence: 0 };
+    console.error(`Error: ${error.message}`, error);
+    displayRecommendation({ size: 'Error analyzing page', confidence: 0 });
   }
 }
 
