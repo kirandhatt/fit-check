@@ -6,7 +6,8 @@
 }
 body {
   margin: 0;
-  font-family: Share Tech Mono, "Courier New", Courier, monospace;
+  font-family: "Share Tech Mono", "Courier New", Courier, monospace;
+  color: #000000;
 }
 
 .container {
@@ -21,8 +22,7 @@ body {
   background-color: #9f8fff;
   border-bottom: solid #000000;
 }
-
-h1 {
+.title h1 {
   font-size: 1.35rem;
   line-height: 2rem;
   margin: 0rem 1.25rem;
@@ -33,12 +33,14 @@ h1 {
 }
 
 label {
-  margin: 0rem 0.25rem 0.25rem 1.25rem;
+  display: block;
+  margin: 0rem 0.25rem 0rem 1.25rem;
   font-size: 1rem;
 }
 
-input[type=number], select {
-  font-family: Share Tech Mono, "Courier New", Courier, monospace;
+input[type=number],
+select {
+  font-family: "Share Tech Mono", "Courier New", Courier, monospace;
   padding: 0.25rem;
   width: 65%;
   border: 0.0625rem solid #000000;
@@ -46,19 +48,92 @@ input[type=number], select {
   font-size: 0.875rem;
   margin: 0.5rem 1.25rem 0.25rem;
 }
-
-input[type=number]::-webkit-outer-spin-button,
-input[type=number]::-webkit-inner-spin-button {
+input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner-spin-button,
+select::-webkit-outer-spin-button,
+select::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
 
 button {
-  font-family: Share Tech Mono, "Courier New", Courier, monospace;
+  font-family: "Share Tech Mono", "Courier New", Courier, monospace;
   background-color: #9f8fff;
   padding: 0.35rem;
   margin: 0rem 1.25rem 0.5rem;
+  text-wrap: nowrap;
+  border: 0.0625rem solid #000000;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 button:hover {
   background-color: #7e93ff;
+}
+
+.buttonContainer {
+  display: flex;
+}
+
+#findMySizeButton {
+  margin: 0rem 0rem 0.5rem;
+}
+
+#fitcheck-recommendation {
+  position: fixed;
+  top: 1.25rem;
+  right: 1.25rem;
+  width: 15.625rem;
+  background-color: #F7F7F7;
+  border: 0.125rem solid #000000;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.25);
+  z-index: 9999;
+  font-family: "Share Tech Mono", "Courier New", Courier, monospace;
+}
+#fitcheck-recommendation h3 {
+  margin-top: 0;
+  color: #9f8fff;
+  border-bottom: 0.0625rem solid #000000;
+  padding-bottom: 0.5rem;
+}
+#fitcheck-recommendation p {
+  margin: 0.5rem 0;
+}
+#fitcheck-recommendation strong {
+  color: #9f8fff;
+}
+#fitcheck-recommendation button {
+  font-family: "Share Tech Mono", "Courier New", Courier, monospace;
+  background-color: #9f8fff;
+  padding: 0.35rem;
+  margin: 0rem 1.25rem 0.5rem;
+  text-wrap: nowrap;
+  border: 0.0625rem solid #000000;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  margin-top: 1rem;
+}
+#fitcheck-recommendation button:hover {
+  background-color: #7e93ff;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+#fitcheck-recommendation {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+button:focus,
+input:focus,
+select:focus {
+  outline: 0.125rem solid #7e93ff;
+  outline-offset: 0.125rem;
 }/*# sourceMappingURL=styles.css.map */

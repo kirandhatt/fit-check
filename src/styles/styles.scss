@@ -1,66 +1,111 @@
+// kept all styling in one file to reduce complications in uploading extension
+
+// variables
+$primary-color: #9f8fff;
+$secondary-color: #7e93ff;
+$background-color: #F7F7F7;
+$text-color: #000000;
+$border-color: #000000;
+$shadow-color: rgba(0, 0, 0, 0.25);
+$font-family: "Share Tech Mono", "Courier New", Courier, monospace;
+
+// mixins
+@mixin button-style {
+  font-family: $font-family;
+  background-color: $primary-color;
+  padding: 0.35rem;
+  margin: 0rem 1.25rem 0.5rem;
+  text-wrap: nowrap;
+  border: .0625rem solid $border-color;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+
+  &:hover {
+    background-color: $secondary-color;
+  }
+}
+
+// import font
 @font-face {
-    font-family: "Share Tech Mono";
-    src: url('../../assets/typography/ShareTechMono-Regular.ttf') format('truetype');
-    font-weight: 400;
-    font-style: normal;
+  font-family: "Share Tech Mono";
+  src: url('../../assets/typography/ShareTechMono-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
 }
 
+// global styles
 body {
-    margin: 0;
-    font-family: Share Tech Mono, 'Courier New', Courier, monospace;
+  margin: 0;
+  font-family: $font-family;
+  color: $text-color;
 }
 
+// container
 .container {
-    width: 15rem;
-    background-color: #F7F7F7;
-    padding: 0rem 0rem 1.25rem;
-    border: solid #000000;
-    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.25);
+  width: 15rem;
+  background-color: $background-color;
+  padding: 0rem 0rem 1.25rem;
+  border: solid $border-color;
+  box-shadow: 0 0.125rem 0.25rem $shadow-color;
 }
 
+// title
 .title {
-    background-color: #9f8fff;
-    border-bottom: solid #000000;
-}
+  background-color: $primary-color;
+  border-bottom: solid $border-color;
 
-h1 {
+  h1 {
     font-size: 1.35rem;
     line-height: 2rem;
     margin: 0rem 1.25rem;
+  }
 }
 
+// form
 .form-group {
-    margin: 1rem 0rem;
+  margin: 1rem 0rem;
 }
 
 label {
-    margin: 0rem 0.25rem 0.25rem 1.25rem;
-    font-size: 1rem;
+  display: block;
+  margin: 0rem 0.25rem 0rem 1.25rem;
+  font-size: 1rem;
 }
 
-input[type="number"], select {
-    font-family: Share Tech Mono, 'Courier New', Courier, monospace;
-    padding: 0.25rem;
-    width: 65%;
-    border: .0625rem solid #000000;
-    border-radius: 0.25rem;
-    font-size: 0.875rem;
-    margin: 0.5rem 1.25rem 0.25rem;
-}
+input[type="number"],
+select {
+  font-family: $font-family;
+  padding: 0.25rem;
+  width: 65%;
+  border: .0625rem solid $border-color;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  margin: 0.5rem 1.25rem 0.25rem;
 
-input[type="number"]::-webkit-outer-spin-button,
-input[type="number"]::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+  &::-webkit-outer-spin-button,
+  &::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
 }
 
 button {
-    font-family: Share Tech Mono, 'Courier New', Courier, monospace;
-    background-color: #9f8fff;
-    padding: 0.35rem;
-    margin: 0rem 1.25rem 0.5rem;
+  @include button-style;
+}
 
-    &:hover {
-        background-color: #7e93ff;
-    }
+.buttonContainer {
+  display: flex;
+}
+
+#findMySizeButton {
+  margin: 0rem 0rem 0.5rem;
+}
+
+// accessibility
+button:focus,
+input:focus,
+select:focus {
+  outline: .125rem solid $secondary-color;
+  outline-offset: .125rem;
 }
