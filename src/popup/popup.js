@@ -55,6 +55,18 @@ function updateUnitLabels(unit) {
   unitSpans.forEach(span => {
     span.textContent = unit;
   });
+
+  // update input step and placeholder based on the unit
+  const inputs = document.querySelectorAll('input[type="number"]');
+  inputs.forEach(input => {
+    if (unit === 'cm') {
+      input.step = '0.1';
+      input.placeholder = 'Enter in cm';
+    } else {
+      input.step = '0.01';
+      input.placeholder = 'Enter in inches';
+    }
+  });
 }
 
 function openOptions() {
