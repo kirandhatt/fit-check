@@ -60,3 +60,10 @@ function updateUnitLabels(unit) {
 function openOptions() {
   chrome.runtime.openOptionsPage();
 }
+
+// listen for changes in storage
+chrome.storage.onChanged.addListener((changes, namespace) => {
+  if (namespace === 'sync' && changes.unit) {
+    updateUnitLabels(changes.unit.newValue);
+  }
+});
