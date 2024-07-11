@@ -102,10 +102,50 @@ button {
   margin: 0rem 0rem 0.5rem;
 }
 
+// recommendation styles
+#fitcheck-recommendation {
+    position: fixed;
+    top: 1.25rem;
+    right: 1.25rem;
+    width: 15.625rem;
+    background-color: $background-color;
+    border: .125rem solid $border-color;
+    border-radius: .5rem;
+    padding: 1rem;
+    box-shadow: 0 0.25rem 0.5rem $shadow-color;
+    z-index: 9999;
+    font-family: $font-family;
+}
+
+h3 {
+    font-size: 1.35rem;
+    line-height: 2rem;
+    margin: 1rem 1.25rem;
+}
+
+p {
+    font-size: 1rem;
+    margin: 1rem 1.25rem 1rem;
+}
+
+strong {
+    color: $primary-color;
+}
+
+// animations
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+#fitcheck-recommendation {
+    animation: fadeIn 0.3s ease-in-out;
+}
+
 // accessibility
-button:focus,
-input:focus,
-select:focus {
-  outline: .125rem solid $secondary-color;
-  outline-offset: .125rem;
+    button:focus,
+    input:focus,
+    select:focus {
+    outline: .125rem solid $secondary-color;
+    outline-offset: .125rem;
 }

@@ -91,32 +91,20 @@ button:hover {
   z-index: 9999;
   font-family: "Share Tech Mono", "Courier New", Courier, monospace;
 }
-#fitcheck-recommendation h3 {
-  margin-top: 0;
+
+h3 {
+  font-size: 1.35rem;
+  line-height: 2rem;
+  margin: 1rem 1.25rem;
+}
+
+p {
+  font-size: 1rem;
+  margin: 1rem 1.25rem 1rem;
+}
+
+strong {
   color: #9f8fff;
-  border-bottom: 0.0625rem solid #000000;
-  padding-bottom: 0.5rem;
-}
-#fitcheck-recommendation p {
-  margin: 0.5rem 0;
-}
-#fitcheck-recommendation strong {
-  color: #9f8fff;
-}
-#fitcheck-recommendation button {
-  font-family: "Share Tech Mono", "Courier New", Courier, monospace;
-  background-color: #9f8fff;
-  padding: 0.35rem;
-  margin: 0rem 1.25rem 0.5rem;
-  text-wrap: nowrap;
-  border: 0.0625rem solid #000000;
-  border-radius: 0.25rem;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  margin-top: 1rem;
-}
-#fitcheck-recommendation button:hover {
-  background-color: #7e93ff;
 }
 
 @keyframes fadeIn {

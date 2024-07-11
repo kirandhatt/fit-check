@@ -115,7 +115,7 @@ function displayRecommendation(recommendation) {
   const popupContent = document.getElementById('popupContent');
   const recommendationContent = document.getElementById('recommendationContent');
 
-  sizeRecommendation.textContent = `Recommended size: ${recommendation.size}`;
+  sizeRecommendation.textContent = `Recommended Size: ${recommendation.size}`;
   confidenceLevel.textContent = `Confidence: ${recommendation.confidence}%`;
 
   popupContent.style.display = 'none';
