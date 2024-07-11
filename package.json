@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "## Overview",
   "main": "content.js",
-"scripts": {
+  "scripts": {
     "build": "webpack --mode production",
     "watch": "webpack --mode development --watch"
   },
@@ -11,9 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@tensorflow-models/mobilenet": "^2.1.1",
-    "@tensorflow/tfjs": "^4.20.0",
-    "tesseract.js": "^5.1.0"
+    "mini-css-extract-plugin": "^2.9.0"
   },
   "devDependencies": {
     "css-loader": "^7.1.2",
