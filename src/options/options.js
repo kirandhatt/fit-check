@@ -2,9 +2,13 @@ import '../styles/styles.scss';
 
 document.addEventListener('DOMContentLoaded', () => {
   const optionsForm = document.getElementById('optionsForm');
+  const backToPopupButton = document.getElementById('backToPopup');
 
   loadOptions();
   optionsForm.addEventListener('submit', saveOptions);
+  backToPopupButton.addEventListener('click', () => {
+    chrome.action.openPopup();
+  });
 });
 
 function loadOptions() {

@@ -1,11 +1,12 @@
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
   entry: {
     popup: './src/popup/popup.js',
     options: './src/options/options.js',
-    content: ['./src/content/content.js', './src/styles/styles.scss'],
+    content: './src/content/content.js',
   },
   output: {
     filename: '[name].bundle.js',
@@ -26,6 +27,14 @@ module.exports = {
   plugins: [
     new MiniCssExtractPlugin({
       filename: '[name].css',
+    }),
+    new CopyPlugin({
+      patterns: [
+        { from: 'src/popup/popup.html', to: 'popup.html' },
+        { from: 'src/options/options.html', to: 'options.html' },
+        { from: 'assets', to: 'assets' },
+        { from: 'manifest.json', to: 'manifest.json' },
+      ],
     }),
   ],
 };

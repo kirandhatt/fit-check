@@ -1,5 +1,6 @@
 import { parseSizeChart } from '../utils/sizeChartParser';
 import { getRecommendation } from '../utils/sizeRecommendation';
+import '../styles/styles.scss';
 
 function analyzePage() {
   window.addEventListener('load', () => {
