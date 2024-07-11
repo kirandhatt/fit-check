@@ -61,16 +61,16 @@ async function saveOptions(e) {
     }
 
     await setStoredData({ unit: newUnit, measurements });
-    alert('Options saved successfully!');
+    alert('Preferences saved successfully!');
 
     // send a message to the popup to update the unit labels
     chrome.runtime.sendMessage({ type: 'unitChange', unit: newUnit });
 
   } catch (error) {
-    console.error('Error saving options:', error);
+    console.error('Error saving preferences:', error);
   }
 }
 
 function closeOptionsPage() {
-  window.close();
+  chrome.runtime.sendMessage({ type: 'switchToPopup' });
 }

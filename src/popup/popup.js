@@ -30,6 +30,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if (message.type === 'unitChange') {
       updateUnitLabels(message.unit);
       loadMeasurements(); // reload measurements to display in the new unit
+    } else if (message.type === 'switchToPopup') {
+      optionsFrame.style.display = 'none';
+      popupContent.style.display = 'block';
     }
   });
 });
@@ -97,7 +100,7 @@ async function saveMeasurements(e) {
     hips: parseFloat(document.getElementById('hips').value),
   };
 
-  // Ensure measurements are not negative
+  // ensure measurements are not negative
   for (const key in measurements) {
     if (measurements[key] < 0) {
       alert('Measurements cannot be negative.');
