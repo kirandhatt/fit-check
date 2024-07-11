@@ -6,25 +6,48 @@ document.addEventListener('DOMContentLoaded', () => {
 
   loadOptions();
   optionsForm.addEventListener('submit', saveOptions);
-  backToPopupButton.addEventListener('click', () => {
-    chrome.action.openPopup();
-  });
+  backToPopupButton.addEventListener('click', closeOptionsPage);
 });
 
-function loadOptions() {
-  chrome.storage.sync.get(['unit'], (result) => {
-    const unitSelect = document.getElementById('unit');
-    unitSelect.value = result.unit || 'in';
+async function getStoredData(keys) {
+  return new Promise((resolve, reject) => {
+    chrome.storage.sync.get(keys, (result) => {
+      if (chrome.runtime.lastError) {
+        reject(chrome.runtime.lastError);
+      } else {
+        resolve(result);
+      }
+    });
   });
 }
 
-function saveOptions(e) {
+async function setStoredData(data) {
+  return new Promise((resolve, reject) => {
+    chrome.storage.sync.set(data, () => {
+      if (chrome.runtime.lastError) {
+        reject(chrome.runtime.lastError);
+      } else {
+        resolve();
+      }
+    });
+  });
+}
+
+async function loadOptions() {
+  try {
+    const { unit = 'in' } = await getStoredData(['unit']);
+    document.getElementById('unit').value = unit;
+  } catch (error) {
+    console.error('Error loading options:', error);
+  }
+}
+
+async function saveOptions(e) {
   e.preventDefault();
   const newUnit = document.getElementById('unit').value;
 
-  chrome.storage.sync.get(['unit', 'measurements'], (result) => {
-    const oldUnit = result.unit || 'in';
-    const measurements = result.measurements || {};
+  try {
+    const { unit: oldUnit = 'in', measurements = {} } = await getStoredData(['unit', 'measurements']);
 
     if (oldUnit !== newUnit) {
       Object.keys(measurements).forEach(key => {
@@ -37,8 +60,18 @@ function saveOptions(e) {
       });
     }
 
-    chrome.storage.sync.set({ unit: newUnit, measurements }, () => {
-      alert('Options saved successfully!');
-    });
-  });
+    await setStoredData({ unit: newUnit, measurements });
+    alert('Options saved successfully!');
+    updateUnitDisplay(newUnit);
+  } catch (error) {
+    console.error('Error saving options:', error);
+  }
+}
+
+function updateUnitDisplay(unit) {
+  document.getElementById('unit').value = unit;
+}
+
+function closeOptionsPage() {
+  window.close();
 }

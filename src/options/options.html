@@ -4,11 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>FitCheck Options</title>
-  <link rel="stylesheet" href="../styles/styles.css">
+  <link rel="stylesheet" href="options.css">
 </head>
 <body>
   <div class="container">
-    <h1>FitCheck Options</h1>
+    <div class="title">
+        <h1>FitCheck Options</h1>
+    </div>
     <form id="optionsForm">
       <div class="form-group">
         <label for="unit">Measurement Unit:</label>
@@ -19,7 +21,10 @@
       </div>
       <button type="submit">Save Options</button>
     </form>
+    <a href="/popup.html">
+        <button id="backToPopup">Close Options</button>
+    </a>
   </div>
-  <script src="options.bundle.js"></script>
+  <script src="../../dist/options.bundle.js"></script>
 </body>
 </html>
