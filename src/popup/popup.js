@@ -3,12 +3,17 @@ import '../styles/styles.scss';
 document.addEventListener('DOMContentLoaded', () => {
   const measurementForm = document.getElementById('measurementForm');
   const optionsButton = document.getElementById('optionsButton');
+  const popupContent = document.getElementById('popupContent');
+  const optionsFrame = document.getElementById('optionsFrame');
 
   initializeExtension();
   loadMeasurements();
 
   measurementForm.addEventListener('submit', saveMeasurements);
-  optionsButton.addEventListener('click', openOptions);
+  optionsButton.addEventListener('click', () => {
+    popupContent.style.display = 'none';
+    optionsFrame.style.display = 'block';
+  });
 
   chrome.storage.onChanged.addListener(handleStorageChanges);
 
@@ -92,7 +97,7 @@ async function saveMeasurements(e) {
     hips: parseFloat(document.getElementById('hips').value),
   };
 
-  // ensure measurements are not negative
+  // Ensure measurements are not negative
   for (const key in measurements) {
     if (measurements[key] < 0) {
       alert('Measurements cannot be negative.');
@@ -131,14 +136,6 @@ function updateUnitLabels(unit) {
       input.placeholder = 'Enter in inches';
     }
   });
-}
-
-function openOptions() {
-  if (chrome.runtime.openOptionsPage) {
-    chrome.runtime.openOptionsPage();
-  } else {
-    window.open(chrome.runtime.getURL('options.html'));
-  }
 }
 
 function handleStorageChanges(changes, namespace) {
