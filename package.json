@@ -4,15 +4,15 @@
   "description": "## Overview",
   "main": "content.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "webpack --mode production",
+    "watch": "webpack --mode development --watch"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@tensorflow-models/mobilenet": "^2.1.1",
-    "@tensorflow/tfjs": "^4.20.0",
-    "tesseract.js": "^5.1.0"
+    "copy-webpack-plugin": "^12.0.2",
+    "mini-css-extract-plugin": "^2.9.0"
   },
   "devDependencies": {
     "css-loader": "^7.1.2",

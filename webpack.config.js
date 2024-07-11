@@ -1,25 +1,40 @@
 const path = require('path');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
-    entry: {
-        content: './src/content/content.js',
-        popup: './src/popup/popup.js',
-        options: './src/options/options.js'
-    },
-    output: {
-        filename: '[name].bundle.js',
-        path: path.resolve(__dirname, 'dist'),
-    },
-    module: {
-        rules: [
-            {
-                test: /\.scss$/,
-                use: [
-                    'style-loader',
-                    'css-loader',
-                    'sass-loader',
-                ],
-            },
+  entry: {
+    popup: './src/popup/popup.js',
+    options: './src/options/options.js',
+    content: './src/content/content.js',
+  },
+  output: {
+    filename: '[name].bundle.js',
+    path: path.resolve(__dirname, 'dist'),
+  },
+  module: {
+    rules: [
+      {
+        test: /\.scss$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+          'sass-loader',
         ],
-    },
+      },
+    ],
+  },
+  plugins: [
+    new MiniCssExtractPlugin({
+      filename: '[name].css',
+    }),
+    new CopyPlugin({
+      patterns: [
+        { from: 'src/popup/popup.html', to: 'popup.html' },
+        { from: 'src/options/options.html', to: 'options.html' },
+        { from: 'assets', to: 'assets' },
+        { from: 'manifest.json', to: 'manifest.json' },
+      ],
+    }),
+  ],
 };
