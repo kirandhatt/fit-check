@@ -19,6 +19,14 @@ document.addEventListener('DOMContentLoaded', () => {
       if (input.value < 0) input.value = 0;
     });
   });
+
+  // listen for unit change messages from options page
+  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.type === 'unitChange') {
+      updateUnitLabels(message.unit);
+      loadMeasurements(); // reload measurements to display in the new unit
+    }
+  });
 });
 
 async function getStoredData(keys) {
@@ -110,7 +118,7 @@ async function saveMeasurements(e) {
 function updateUnitLabels(unit) {
   const unitLabels = document.querySelectorAll('.unit-label');
   unitLabels.forEach(label => {
-    label.textContent = unit === 'cm' ? 'centimeters' : 'inches';
+    label.textContent = unit === 'cm' ? '(cm)' : '(in)';
   });
 
   const inputs = document.querySelectorAll('input[type="number"]');

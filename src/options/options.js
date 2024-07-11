@@ -62,14 +62,10 @@ async function saveOptions(e) {
 
     await setStoredData({ unit: newUnit, measurements });
     alert('Options saved successfully!');
-    updateUnitDisplay(newUnit);
+
   } catch (error) {
     console.error('Error saving options:', error);
   }
-}
-
-function updateUnitDisplay(unit) {
-  document.getElementById('unit').value = unit;
 }
 
 function closeOptionsPage() {
