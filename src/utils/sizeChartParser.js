@@ -1,19 +1,88 @@
-export function parseSizeChart(document) {
-  const tables = document.querySelectorAll('table');
-  for (const table of tables) {
-    const sizeChart = parseSizeTable(table);
+async function getUserPreferredUnit() {
+  return new Promise((resolve) => {
+    chrome.storage.sync.get(['preferredUnit'], function(result) {
+      resolve(result.preferredUnit || 'in'); // default to inches if no preference is set
+    });
+  });
+}
+
+export async function parseSizeChart(document) {
+  const preferredUnit = await getUserPreferredUnit();
+
+  const sizeChart = parseSizeChartFromDocument(document, preferredUnit);
+  if (sizeChart) {
+    return sizeChart;
+  }
+
+  const sizeGuideLinks = Array.from(document.querySelectorAll('a')).filter(link =>
+    /size\s*guide|sizing\s*guide|size\s*chart|sizing\s*chart/i.test(link.innerText)
+  );
+
+  for (const link of sizeGuideLinks) {
+    const response = await fetch(link.href);
+    const text = await response.text();
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(text, 'text/html');
+    const sizeChart = parseSizeChartFromDocument(doc, preferredUnit);
     if (sizeChart) {
       return sizeChart;
     }
   }
-  return parseSizeText(document.body.innerText);
+
+  return null;
 }
 
-function parseSizeTable(table) {
+function parseSizeChartFromDocument(doc, preferredUnit) {
+  const tables = doc.querySelectorAll('table');
+  let sizeChart = null;
+  let detectedUnit = null;
+
+  for (const table of tables) {
+    const headers = Array.from(table.querySelectorAll('th, td')).map(cell => cell.innerText ? cell.innerText.trim().toLowerCase() : '');
+    const sizeIndex = headers.findIndex(header => /size|^s$|^m$|^l$/i.test(header));
+    const measurementIndices = {
+      bust: headers.findIndex(header => /bust/i.test(header)),
+      waist: headers.findIndex(header => /waist/i.test(header)),
+      hips: headers.findIndex(header => /hip/i.test(header)),
+    };
+
+    if (sizeIndex === -1 || Object.values(measurementIndices).every(index => index === -1)) {
+      continue;
+    }
+
+    // detect unit from headers
+    for (const header of Object.keys(measurementIndices)) {
+      const index = measurementIndices[header];
+      if (index !== -1) {
+        const headerText = headers[index];
+        if (/cm|centimetre|centimeter/i.test(headerText)) {
+          detectedUnit = 'cm';
+          break;
+        } else if (/inch|inches/i.test(headerText)) {
+          detectedUnit = 'in';
+          break;
+        }
+      }
+    }
+
+    if (!detectedUnit) {
+      continue;
+    }
+
+    sizeChart = parseSizeTable(table, preferredUnit, detectedUnit);
+    if (sizeChart) {
+      break;
+    }
+  }
+
+  return sizeChart;
+}
+
+function parseSizeTable(table, preferredUnit, detectedUnit) {
   const headers = Array.from(table.querySelectorAll('th, td')).map(cell => cell.innerText ? cell.innerText.trim().toLowerCase() : '');
   const sizeIndex = headers.findIndex(header => /size|^s$|^m$|^l$/i.test(header));
   const measurementIndices = {
-    chest: headers.findIndex(header => /chest|bust/i.test(header)),
+    bust: headers.findIndex(header => /bust/i.test(header)),
     waist: headers.findIndex(header => /waist/i.test(header)),
     hips: headers.findIndex(header => /hip/i.test(header)),
   };
@@ -34,10 +103,25 @@ function parseSizeTable(table) {
 
     for (const [measure, index] of Object.entries(measurementIndices)) {
       if (index !== -1 && cells.length > index) {
-        const value = parseFloat(cells[index].innerText ? cells[index].innerText.trim() : '');
-        if (!isNaN(value)) {
-          sizeChart[size][measure] = value;
+        let rangeText = cells[index].innerText.trim();
+        let values = rangeText.split('-').map(val => parseFloat(val.trim()));
+        let min = values[0];
+        let max = values.length > 1 ? values[1] : values[0];
+
+        if (isNaN(min) || isNaN(max)) {
+          continue;
         }
+
+        // convert measurements based on detectedUnit and preferredUnit
+        if (detectedUnit === 'cm' && preferredUnit === 'in') {
+          min = convertCmToInches(min);
+          max = convertCmToInches(max);
+        } else if (detectedUnit === 'in' && preferredUnit === 'cm') {
+          min = convertInchesToCm(min);
+          max = convertInchesToCm(max);
+        }
+
+        sizeChart[size][measure] = { min, max };
       }
     }
   }
@@ -45,19 +129,10 @@ function parseSizeTable(table) {
   return Object.keys(sizeChart).length > 0 ? sizeChart : null;
 }
 
-function parseSizeText(text) {
-  const sizeChartRegex = /Size\s+(\w+)[\s\S]*?Chest:?\s*(\d+(\.\d+)?)"?\s*Waist:?\s*(\d+(\.\d+)?)"?\s*Hips?:?\s*(\d+(\.\d+)?)"?/gi;
-  const sizeChart = {};
+function convertCmToInches(cm) {
+  return cm / 2.54;
+}
 
-  let match;
-  while ((match = sizeChartRegex.exec(text)) !== null) {
-    const [, size, chest, , waist, , hips] = match;
-    sizeChart[size] = {
-      chest: parseFloat(chest),
-      waist: parseFloat(waist),
-      hips: parseFloat(hips),
-    };
-  }
-
-  return Object.keys(sizeChart).length > 0 ? sizeChart : null;
+function convertInchesToCm(inches) {
+  return inches * 2.54;
 }

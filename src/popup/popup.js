@@ -138,15 +138,15 @@ async function analyzePage(pageContent) {
   try {
     const parser = new DOMParser();
     const doc = parser.parseFromString(pageContent, 'text/html');
-    const sizeChart = parseSizeChart(doc);
+    const { sizeChart, unit } = await parseSizeChart(doc);
     
     if (sizeChart) {
       const storage = await chrome.storage.sync.get(['measurements', 'unit']);
       const measurements = storage.measurements;
-      const unit = storage.unit || 'in';
+      const userUnit = storage.unit || 'in';
 
       if (measurements && Object.keys(measurements).length > 0) {
-        const recommendation = getRecommendation(sizeChart, measurements, unit);
+        const recommendation = getRecommendation(sizeChart, measurements, userUnit, unit);
         displayRecommendation(recommendation);
       } else {
         displayRecommendation({ size: 'No measurements found', confidence: 0 });
