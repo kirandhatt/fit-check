@@ -86,29 +86,23 @@ function saveMeasurements(e) {
   });
 }
 
-function findMySize() {
-  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-    if (tabs[0]) {
-      chrome.scripting.executeScript({
-        target: { tabId: tabs[0].id },
-        function: () => {
-          return document.body.innerHTML;
-        }
-      }, (injectionResults) => {
-        if (chrome.runtime.lastError) {
-          console.error(chrome.runtime.lastError);
-          displayRecommendation({ size: `Error: ${chrome.runtime.lastError.message}`, confidence: 0 });
-        } else if (injectionResults && injectionResults[0] && injectionResults[0].result) {
-          analyzePage(injectionResults[0].result);
-        } else {
-          displayRecommendation({ size: 'Unable to retrieve page content', confidence: 0 });
-        }
-      });
+async function findMySize() {
+  try {
+    const [tab] = await chrome.tabs.query({active: true, currentWindow: true});
+    const injectionResults = await chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      function: () => document.body.innerHTML,
+    });
+
+    if (injectionResults && injectionResults[0] && injectionResults[0].result) {
+      await analyzePage(injectionResults[0].result);
     } else {
-      console.error('No active tab found');
-      displayRecommendation({ size: 'Error: No active tab', confidence: 0 });
+      displayRecommendation({ size: 'Unable to retrieve page content', confidence: 0 });
     }
-  });
+  } catch (error) {
+    console.error('Error in findMySize:', error);
+    displayRecommendation({ size: `Error: ${error.message}`, confidence: 0 });
+  }
 }
 
 function displayRecommendation(recommendation) {
@@ -138,15 +132,16 @@ async function analyzePage(pageContent) {
   try {
     const parser = new DOMParser();
     const doc = parser.parseFromString(pageContent, 'text/html');
-    const { sizeChart, unit } = await parseSizeChart(doc);
+    const result = await parseSizeChart(doc);
     
-    if (sizeChart) {
+    if (result) {
+      const { sizeChart, unit: chartUnit } = result;
       const storage = await chrome.storage.sync.get(['measurements', 'unit']);
       const measurements = storage.measurements;
       const userUnit = storage.unit || 'in';
 
       if (measurements && Object.keys(measurements).length > 0) {
-        const recommendation = getRecommendation(sizeChart, measurements, userUnit, unit);
+        const recommendation = getRecommendation(sizeChart, measurements, userUnit, chartUnit);
         displayRecommendation(recommendation);
       } else {
         displayRecommendation({ size: 'No measurements found', confidence: 0 });

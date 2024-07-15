@@ -1,15 +1,5 @@
-async function getUserPreferredUnit() {
-  return new Promise((resolve) => {
-    chrome.storage.sync.get(['preferredUnit'], function(result) {
-      resolve(result.preferredUnit || 'in'); // default to inches if no preference is set
-    });
-  });
-}
-
 export async function parseSizeChart(document) {
-  const preferredUnit = await getUserPreferredUnit();
-
-  const sizeChart = parseSizeChartFromDocument(document, preferredUnit);
+  const sizeChart = parseSizeChartFromDocument(document);
   if (sizeChart) {
     return sizeChart;
   }
@@ -23,7 +13,7 @@ export async function parseSizeChart(document) {
     const text = await response.text();
     const parser = new DOMParser();
     const doc = parser.parseFromString(text, 'text/html');
-    const sizeChart = parseSizeChartFromDocument(doc, preferredUnit);
+    const sizeChart = parseSizeChartFromDocument(doc);
     if (sizeChart) {
       return sizeChart;
     }
@@ -32,16 +22,16 @@ export async function parseSizeChart(document) {
   return null;
 }
 
-function parseSizeChartFromDocument(doc, preferredUnit) {
+function parseSizeChartFromDocument(doc) {
   const tables = doc.querySelectorAll('table');
   let sizeChart = null;
   let detectedUnit = null;
 
   for (const table of tables) {
-    const headers = Array.from(table.querySelectorAll('th, td')).map(cell => cell.innerText ? cell.innerText.trim().toLowerCase() : '');
+    const headers = Array.from(table.querySelectorAll('th, td')).map(cell => cell.innerText.trim().toLowerCase());
     const sizeIndex = headers.findIndex(header => /size|^s$|^m$|^l$/i.test(header));
     const measurementIndices = {
-      bust: headers.findIndex(header => /bust/i.test(header)),
+      bust: headers.findIndex(header => /bust|chest/i.test(header)),
       waist: headers.findIndex(header => /waist/i.test(header)),
       hips: headers.findIndex(header => /hip/i.test(header)),
     };
@@ -50,54 +40,37 @@ function parseSizeChartFromDocument(doc, preferredUnit) {
       continue;
     }
 
-    // detect unit from headers
-    for (const header of Object.keys(measurementIndices)) {
-      const index = measurementIndices[header];
-      if (index !== -1) {
-        const headerText = headers[index];
-        if (/cm|centimetre|centimeter/i.test(headerText)) {
-          detectedUnit = 'cm';
-          break;
-        } else if (/inch|inches/i.test(headerText)) {
-          detectedUnit = 'in';
-          break;
-        }
-      }
-    }
+    detectedUnit = detectUnit(headers);
 
     if (!detectedUnit) {
       continue;
     }
 
-    sizeChart = parseSizeTable(table, preferredUnit, detectedUnit);
+    sizeChart = parseSizeTable(table, sizeIndex, measurementIndices, detectedUnit);
     if (sizeChart) {
       break;
     }
   }
 
-  return sizeChart;
+  return sizeChart ? { sizeChart, unit: detectedUnit } : null;
 }
 
-function parseSizeTable(table, preferredUnit, detectedUnit) {
-  const headers = Array.from(table.querySelectorAll('th, td')).map(cell => cell.innerText ? cell.innerText.trim().toLowerCase() : '');
-  const sizeIndex = headers.findIndex(header => /size|^s$|^m$|^l$/i.test(header));
-  const measurementIndices = {
-    bust: headers.findIndex(header => /bust/i.test(header)),
-    waist: headers.findIndex(header => /waist/i.test(header)),
-    hips: headers.findIndex(header => /hip/i.test(header)),
-  };
-
-  if (sizeIndex === -1 || Object.values(measurementIndices).every(index => index === -1)) {
-    return null;
+function detectUnit(headers) {
+  const unitHeader = headers.find(header => /cm|centimetre|centimeter|inch|inches/i.test(header));
+  if (unitHeader) {
+    return /cm|centimetre|centimeter/i.test(unitHeader) ? 'cm' : 'in';
   }
+  return null;
+}
 
+function parseSizeTable(table, sizeIndex, measurementIndices, detectedUnit) {
   const sizeChart = {};
   const rows = table.querySelectorAll('tr');
 
   for (let i = 1; i < rows.length; i++) {
     const cells = rows[i].querySelectorAll('td');
     if (cells.length <= sizeIndex) continue;
-    const size = cells[sizeIndex].innerText ? cells[sizeIndex].innerText.trim() : '';
+    const size = cells[sizeIndex].innerText.trim();
     if (!size) continue;
     sizeChart[size] = {};
 
@@ -112,27 +85,10 @@ function parseSizeTable(table, preferredUnit, detectedUnit) {
           continue;
         }
 
-        // convert measurements based on detectedUnit and preferredUnit
-        if (detectedUnit === 'cm' && preferredUnit === 'in') {
-          min = convertCmToInches(min);
-          max = convertCmToInches(max);
-        } else if (detectedUnit === 'in' && preferredUnit === 'cm') {
-          min = convertInchesToCm(min);
-          max = convertInchesToCm(max);
-        }
-
         sizeChart[size][measure] = { min, max };
       }
     }
   }
 
   return Object.keys(sizeChart).length > 0 ? sizeChart : null;
-}
-
-function convertCmToInches(cm) {
-  return cm / 2.54;
-}
-
-function convertInchesToCm(inches) {
-  return inches * 2.54;
 }
