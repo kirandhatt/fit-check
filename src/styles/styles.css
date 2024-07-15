@@ -1,0 +1,141 @@
+@font-face {
+  font-family: "Share Tech Mono";
+  src: url("../../assets/typography/ShareTechMono-Regular.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+body {
+  margin: 0;
+  font-family: "Share Tech Mono", "Courier New", Courier, monospace;
+  color: #000000;
+}
+
+.container {
+  width: 15rem;
+  background-color: #F7F7F7;
+  padding: 0rem 0rem 1.25rem;
+  border: solid #000000;
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.25);
+}
+
+.title {
+  background-color: #9f8fff;
+  border-bottom: solid #000000;
+}
+.title h1 {
+  font-size: 1.35rem;
+  line-height: 2rem;
+  margin: 0rem 1.25rem;
+}
+
+.form-group {
+  margin: 1rem 0rem;
+}
+
+label {
+  display: block;
+  margin: 0rem 0.25rem 0rem 1.25rem;
+  font-size: 1rem;
+}
+
+input[type=number],
+select {
+  font-family: "Share Tech Mono", "Courier New", Courier, monospace;
+  padding: 0.25rem;
+  width: 65%;
+  border: 0.0625rem solid #000000;
+  border-radius: 0.25rem;
+  font-size: 0.875rem;
+  margin: 0.5rem 1.25rem 0.25rem;
+}
+input[type=number]::-webkit-outer-spin-button, input[type=number]::-webkit-inner-spin-button,
+select::-webkit-outer-spin-button,
+select::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+button {
+  font-family: "Share Tech Mono", "Courier New", Courier, monospace;
+  background-color: #9f8fff;
+  padding: 0.35rem;
+  margin: 0rem 1.25rem 0.5rem;
+  text-wrap: nowrap;
+  border: 0.0625rem solid #000000;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+button:hover {
+  background-color: #7e93ff;
+}
+
+.buttonContainer {
+  display: flex;
+}
+
+#findMySizeButton {
+  margin: 0rem 0rem 0.5rem;
+}
+
+#fitcheck-recommendation {
+  position: fixed;
+  top: 1.25rem;
+  right: 1.25rem;
+  width: 15.625rem;
+  background-color: #F7F7F7;
+  border: 0.125rem solid #000000;
+  border-radius: 0.5rem;
+  padding: 1rem;
+  box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.25);
+  z-index: 9999;
+  font-family: "Share Tech Mono", "Courier New", Courier, monospace;
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+h3 {
+  font-size: 1.35rem;
+  line-height: 2rem;
+  margin: 1rem 1.25rem;
+}
+
+.recommendation-label, .confidence-label {
+  font-size: 1rem;
+  margin: 1rem 0.25rem 1rem 1.25rem;
+}
+
+.recommendation-value {
+  display: flex;
+  font-size: 1rem;
+  margin: 0.25rem 0.25rem 1rem 1.25rem;
+  text-wrap: wrap;
+  color: #7e93ff;
+}
+
+.confidence-value {
+  font-size: 1rem;
+  color: #7e93ff;
+}
+
+.error-state {
+  color: #FF6E56;
+}
+
+#backToPopupButton {
+  margin-top: 1rem;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+button:focus,
+input:focus,
+select:focus {
+  outline: 0.125rem solid #7e93ff;
+  outline-offset: 0.125rem;
+}/*# sourceMappingURL=styles.css.map */
