@@ -1,14 +1,3 @@
-import '../styles/styles.scss';
-
-document.addEventListener('DOMContentLoaded', () => {
-  const optionsForm = document.getElementById('optionsForm');
-  const backToPopupButton = document.getElementById('backToPopupButton');
-
-  loadOptions();
-  optionsForm.addEventListener('submit', saveOptions);
-  backToPopupButton.addEventListener('click', closeOptionsPage);
-});
-
 async function getStoredData(keys) {
   return new Promise((resolve, reject) => {
     chrome.storage.sync.get(keys, (result) => {
@@ -36,7 +25,12 @@ async function setStoredData(data) {
 async function loadOptions() {
   try {
     const { unit = 'in' } = await getStoredData(['unit']);
-    document.getElementById('unit').value = unit;
+    const unitSelect = document.getElementById('unit');
+    if (unitSelect) {
+      unitSelect.value = unit;
+    } else {
+      console.error('Unit select element not found');
+    }
   } catch (error) {
     console.error('Error loading options:', error);
   }
@@ -44,7 +38,12 @@ async function loadOptions() {
 
 async function saveOptions(e) {
   e.preventDefault();
-  const newUnit = document.getElementById('unit').value;
+  const unitSelect = document.getElementById('unit');
+  if (!unitSelect) {
+    console.error('Unit select element not found');
+    return;
+  }
+  const newUnit = unitSelect.value;
 
   try {
     const { unit: oldUnit = 'in', measurements = {} } = await getStoredData(['unit', 'measurements']);
@@ -73,4 +72,30 @@ async function saveOptions(e) {
 
 function closeOptionsPage() {
   chrome.runtime.sendMessage({ type: 'switchToPopup' });
+}
+
+function initializeOptionsPage() {
+  const optionsForm = document.getElementById('optionsForm');
+  const backToPopupButton = document.getElementById('backToPopup');
+
+  if (optionsForm) {
+    optionsForm.addEventListener('submit', saveOptions);
+  } else {
+    console.error('Options form not found');
+  }
+
+  if (backToPopupButton) {
+    backToPopupButton.addEventListener('click', closeOptionsPage);
+  } else {
+    console.error('Back to popup button not found');
+  }
+
+  loadOptions();
+}
+
+// wait for the DOM to be fully loaded before initializing
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeOptionsPage);
+} else {
+  initializeOptionsPage();
 }

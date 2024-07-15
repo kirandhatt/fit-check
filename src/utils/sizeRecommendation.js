@@ -3,9 +3,16 @@ export function getRecommendation(sizeChart, measurements, userUnit, chartUnit) 
   let bestScore = Infinity;
 
   const weights = {
-    chest: 0.4,
+    bust: 0.4,
     waist: 0.4,
     hips: 0.2,
+  };
+
+  // define a standard deviation for each measurement (in inches)
+  const standardDeviations = {
+    bust: 2,
+    waist: 2,
+    hips: 2,
   };
 
   for (const size in sizeChart) {
@@ -14,11 +21,18 @@ export function getRecommendation(sizeChart, measurements, userUnit, chartUnit) 
     let totalWeight = 0;
 
     for (const measure in weights) {
-      if (chartMeasurements[measure] !== undefined && measurements[measure] !== undefined) {
-        const userMeasure = convertToPreferredUnit(measurements[measure], userUnit, chartUnit);
-        const chartMeasure = chartMeasurements[measure];
+      if (chartMeasurements[measure] && measurements[measure]) {
+        const userMeasure = convertToChartUnit(measurements[measure], userUnit, chartUnit);
+        const chartMeasure = (chartMeasurements[measure].min + chartMeasurements[measure].max) / 2;
         const diff = Math.abs(chartMeasure - userMeasure);
-        score += diff * weights[measure];
+        
+        // convert the difference to inches for consistent scoring
+        const diffInInches = chartUnit === 'cm' ? diff / 2.54 : diff;
+        
+        // calculate z-score
+        const zScore = diffInInches / standardDeviations[measure];
+        
+        score += zScore * weights[measure];
         totalWeight += weights[measure];
       }
     }
@@ -33,7 +47,8 @@ export function getRecommendation(sizeChart, measurements, userUnit, chartUnit) 
     }
   }
 
-  const confidence = Math.max(0, Math.min(100, Math.round((1 - bestScore / 5) * 100)));
+  // calculate confidence based on the z-score
+  const confidence = Math.max(0, Math.min(100, Math.round((1 - bestScore) * 100)));
 
   return {
     size: bestSize,
@@ -41,20 +56,7 @@ export function getRecommendation(sizeChart, measurements, userUnit, chartUnit) 
   };
 }
 
-function convertToPreferredUnit(value, fromUnit, toUnit) {
-  if (fromUnit === 'cm' && toUnit === 'in') {
-    return convertCmToInches(value);
-  } else if (fromUnit === 'in' && toUnit === 'cm') {
-    return convertInchesToCm(value);
-  } else {
-    return value; // no conversion needed if units are the same
-  }
-}
-
-function convertCmToInches(cm) {
-  return cm / 2.54;
-}
-
-function convertInchesToCm(inches) {
-  return inches * 2.54;
+function convertToChartUnit(value, fromUnit, toUnit) {
+  if (fromUnit === toUnit) return value;
+  return fromUnit === 'cm' ? value / 2.54 : value * 2.54;
 }
