@@ -3,6 +3,12 @@
   "name": "FitCheck",
   "version": "1.0",
   "description": "Helps you find your size in different clothing brands.",
+  "icons": {
+    "16": "assets/icons/fitCheck_favicon.png",
+    "32": "assets/icons/fitCheck_favicon.png",
+    "48": "assets/icons/fitCheck_favicon.png",
+    "128": "assets/icons/fitCheck_favicon.png"
+  },
   "permissions": [
     "storage",
     "activeTab",
