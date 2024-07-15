@@ -2,7 +2,7 @@ import '../styles/styles.scss';
 
 document.addEventListener('DOMContentLoaded', () => {
   const optionsForm = document.getElementById('optionsForm');
-  const backToPopupButton = document.getElementById('backToPopup');
+  const backToPopupButton = document.getElementById('backToPopupButton');
 
   loadOptions();
   optionsForm.addEventListener('submit', saveOptions);
@@ -64,7 +64,7 @@ async function saveOptions(e) {
     alert('Preferences saved successfully!');
 
     // send a message to the popup to update the unit labels
-    chrome.runtime.sendMessage({ type: 'unitChange', unit: newUnit });
+    chrome.runtime.sendMessage({ type: 'unitChange', unit: newUnit, oldUnit: oldUnit });
 
   } catch (error) {
     console.error('Error saving preferences:', error);
